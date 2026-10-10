@@ -7,6 +7,7 @@ const App = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
 
   const responseCache = useMemo(() => new Map(), []);
   const requestUrl = useMemo(
@@ -60,10 +61,10 @@ const App = () => {
     return () => {
       isCurrentRequest = false;
     };
-  }, [cachedPosts, requestUrl, responseCache]);
+  }, [cachedPosts, requestUrl, responseCache, retryCount]);
 
   return (
-    <main className="app-shell">
+    <div className="app-shell">
       <header className="topbar">
         <a className="wordmark" href="#top" aria-label="Postroom home">
           <span className="wordmark-mark">P</span>
@@ -92,7 +93,7 @@ const App = () => {
           <div className="feed-heading">
             <h2 id="feed-title">Latest posts</h2>
             <span className="post-count">
-              {isLoading ? "…" : posts.length.toString().padStart(2, "0")}
+              {isLoading ? "..." : posts.length.toString().padStart(2, "0")}
             </span>
           </div>
           <label className="filter-control">
@@ -113,14 +114,14 @@ const App = () => {
         {isLoading && (
           <div className="message-state" role="status">
             <span className="loading-indicator" />
-            <span>Gathering the latest posts…</span>
+            <span>Gathering the latest posts...</span>
           </div>
         )}
 
         {error && (
           <div className="message-state error-state" role="alert">
             <span>{error}</span>
-            <button type="button" onClick={() => setUserId((current) => current)}>
+            <button type="button" onClick={() => setRetryCount((count) => count + 1)}>
               Retry
             </button>
           </div>
@@ -144,7 +145,7 @@ const App = () => {
                   <h3>{post.title}</h3>
                   <p>{post.body}</p>
                 </div>
-                <span className="post-arrow" aria-hidden="true">↗</span>
+                <span className="post-arrow" aria-hidden="true">&#8599;</span>
               </article>
             ))}
           </div>
@@ -154,7 +155,7 @@ const App = () => {
         <span>POSTROOM / COMMUNITY ARCHIVE</span>
         <span>DATA PROVIDED BY JSONPLACEHOLDER</span>
       </footer>
-    </main>
+    </div>
   );
 };
 
